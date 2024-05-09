@@ -10,6 +10,7 @@ ScalarConverter::ScalarConverter(const ScalarConverter& src)
 
 ScalarConverter& ScalarConverter::operator=(const ScalarConverter& rhs)
 {
+    (void)rhs;
     return *this;
 }
 
@@ -180,10 +181,10 @@ void print(std::string str, char c, int i, float f, double d)
 
 void ScalarConverter::convert(std::string str)
 {
-    char c;
-    int i;
-    float f;
-    double d;
+    char c = '\0';
+    int i = 0;
+    float f = 0.0f;
+    double d = 0.0;
 
     try {
         if (isChar(str))
