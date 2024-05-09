@@ -1,8 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <fstream>
-#include <limits>
+#include <sstream>
 
 class ScalarConverter {
     private:
@@ -14,7 +13,7 @@ class ScalarConverter {
     public:
         ~ScalarConverter(void);
 
-        static void convert(std::string const &value);
+        static void convert(std::string str);
 
         class ScalarConverterException : public std::exception {
             virtual const char* what() const throw() { return "Unknown type"; }
