@@ -24,7 +24,7 @@ char toChar(const std::string str)
 
 int toInt(const std::string str)
 {
-    std::istringstream iss(str);
+    std::stringstream iss(str);
     int value;
     iss >> value;
     return value;
@@ -32,7 +32,12 @@ int toInt(const std::string str)
 
 float toFloat(const std::string str)
 {
-    std::istringstream iss(str);
+    std::string s = str;
+    if (s[s.length() - 1] == 'f')
+    {
+        s = s.substr(0, s.length() - 1);
+    }
+    std::stringstream iss(s);
     float value;
     iss >> value;
     return value;
@@ -40,7 +45,12 @@ float toFloat(const std::string str)
 
 double toDouble(const std::string str)
 {
-    std::istringstream iss(str);
+    std::string s = str;
+    if (s[s.length() - 1] == 'f')
+    {
+        s = s.substr(0, s.length() - 1);
+    }
+    std::stringstream iss(s);
     double value;
     iss >> value;
     return value;
@@ -116,9 +126,9 @@ bool isLiterals(std::string str)
     return false;
 }
 
-void printChar(std::string str, char c, int i)
+void printChar(std::string str, bool impossible, char c, int i)
 {
-    if (isLiterals(str) || (!std::isprint(i) && i >= 127))
+    if (impossible || isLiterals(str) || (!std::isprint(i) && i >= 127))
         std::cout << "Impossible";
     else if (!std::isprint(i))
         std::cout << "Non displayable";
@@ -127,16 +137,16 @@ void printChar(std::string str, char c, int i)
     std::cout << std::endl;
 }
 
-void printInt(std::string str, int i)
+void printInt(std::string str, bool impossible, int i)
 {
-    if (isLiterals(str) || (!std::isprint(i) && i >= 127))
+    if (impossible || isLiterals(str) || (!std::isprint(i) && i >= 127))
         std::cout << "Impossible";
     else
         std::cout << i;
     std::cout << std::endl;
 }
 
-void printFloat(std::string str, float f)
+void printFloat(std::string str, bool impossible, float f)
 {
     if (str.compare( "nan" ) == 0 || str.compare( "nanf" ) == 0)
         std::cout << "nanf";
@@ -144,6 +154,8 @@ void printFloat(std::string str, float f)
         std::cout << "+inff";
     else if (str.compare( "-inff" ) == 0 || str.compare( "-inf" ) == 0)
         std::cout << "-inff";
+    else if (impossible)
+        std::cout << "Impossible";
     else {
         if (f - static_cast<int>(f) == 0)
             std::cout << f << ".0f";
@@ -153,7 +165,7 @@ void printFloat(std::string str, float f)
     std::cout << std::endl;
 }
 
-void printDouble(std::string str, double d)
+void printDouble(std::string str, bool impossible, double d)
 {
     if (str.compare( "nan" ) == 0 || str.compare( "nanf" ) == 0)
         std::cout << "nan";
@@ -161,9 +173,11 @@ void printDouble(std::string str, double d)
         std::cout << "+inf";
     else if (str.compare( "-inff" ) == 0 || str.compare( "-inf" ) == 0)
         std::cout << "-inf";
+    else if (impossible)
+        std::cout << "Impossible";
     else
     {
-        if (d - static_cast<int>(d) == 0 )
+        if (d - static_cast<int>(d) == 0)
             std::cout << d << ".0";
         else
             std::cout << d << "f";
@@ -171,16 +185,9 @@ void printDouble(std::string str, double d)
     std::cout << std::endl;
 }
 
-void print(std::string str, char c, int i, float f, double d)
-{
-    std::cout << "char: "; printChar(str, c, i);
-    std::cout << "int: "; printInt(str, i);
-    std::cout << "float: "; printFloat(str, f);
-    std::cout << "double: "; printDouble(str, d);
-}
-
 void ScalarConverter::convert(std::string str)
 {
+    bool impossible = false;
     char c = '\0';
     int i = 0;
     float f = 0.0f;
@@ -215,7 +222,14 @@ void ScalarConverter::convert(std::string str)
             f = static_cast<float>(d);
             c = static_cast<char>(d);
         }
-        print(str, c, i, f, d);
+        else
+        {
+            impossible = true;
+        }
+        std::cout << "char: "; printChar(str, impossible, c, i);
+        std::cout << "int: "; printInt(str, impossible, i);
+        std::cout << "float: "; printFloat(str, impossible, f);
+        std::cout << "double: "; printDouble(str, impossible, d);
     }
     catch (std::exception &e)
     {
